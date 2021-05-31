@@ -1,0 +1,25 @@
+---
+  - name: installing {{ web_pkg }} package
+    dnf:
+      name: "{{ web_pkg }}"
+      state: present
+  - name: start and enable {{ web_svc }} service
+    service:
+      name: "{{ web_svc }}"
+      state: started
+      enabled: true
+  - name: copying hello.txt file
+    copy:
+      src: hello.txt
+      dest: /home/admin/hello.txt
+  - name: opening {{ web_rule }} service in firewall  
+    firewalld:
+      service: "{{ web_rule }}"
+      state: enabled
+      permanent: true
+      immediate: true
+  - name: copying index.html.j2 file
+    template:
+      src: index.html.j2
+      dest: /var/www/html/index.html
+    notify: restart apache
